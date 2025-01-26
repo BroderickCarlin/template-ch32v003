@@ -1,0 +1,15 @@
+[target.'cfg(all(target_arch = "arm", target_os = "none"))']
+# Use probe-rs if using an actual probe, if using the RP2040's USB bootloader, use elf2uf2
+# runner = "probe-rs run --chip RP2040"
+runner = "elf2uf2-rs --deploy --serial --verbose"
+
+[build]
+target = "thumbv6m-none-eabi"
+
+[env]
+DEFMT_LOG = "trace"
+
+[profile.release]
+# Allows defmt to display log locations even in release
+debug = true
+
