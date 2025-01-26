@@ -1,15 +1,23 @@
-[target.'cfg(all(target_arch = "arm", target_os = "none"))']
-# Use probe-rs if using an actual probe, if using the RP2040's USB bootloader, use elf2uf2
-# runner = "probe-rs run --chip RP2040"
-runner = "elf2uf2-rs --deploy --serial --verbose"
-
 [build]
-target = "thumbv6m-none-eabi"
+target = "riscv32ec-unknown-none-elf.json"
 
-[env]
-DEFMT_LOG = "trace"
+[target.'cfg(all(target_arch = "riscv32", target_os = "none"))']
+# runner = "riscv64-unknown-elf-gdb -q -x openocd.gdb"
+# runner = "riscv-none-embed-gdb -q -x openocd.gdb"
+# runner = "gdb -q -x openocd.gdb"
+# runner = "wlink -v flash"
 
-[profile.release]
-# Allows defmt to display log locations even in release
-debug = true
+runner = "wlink -v flash --enable-sdi-print --watch-serial"
 
+# Flash and debug chip with probe-rs. https://probe.rs/
+# runner = "probe-rs run --chip ch32v003"
+
+[unstable]
+build-std = ["core"]
+# build-std = ["core", "compiler_builtins"]
+# build-std-features = ["compiler-builtins-mem"]
+
+[target."riscv32ec-unknown-none-elf"]
+rustflags = [
+    #  "-C", "link-arg=-Tlink.x",
+]

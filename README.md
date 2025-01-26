@@ -1,9 +1,9 @@
 # README
-A basic template for Rust projects based on the RP2040
+A basic template for Rust projects based on the CH32v003
 
 **MAKE SURE TO UPDATE**
 
-Make sure to update `.cargo/config.toml` to match how you are connecting to the RP2040 (probe or direct over USB)
+Make sure to update `.cargo/config.toml` to match how you are connecting to the CH32v003 (probe or other methods)
 
 ## Getting started
 
@@ -13,8 +13,11 @@ Follow guide here: https://embassy.dev/book/dev/getting_started.html
 
 plug in the dev board and just run:
 ```bash
-cargo run
+cargo run --release
 ```
 
-## Devboard Pinout
-![Devboard Pinout](docs/pinout.png)
+by default the repo uses wlink for programming. It should be installed first from: https://github.com/ch32-rs/wlink
+
+## Devboard Example
+(must have an external wlink programer)
+![Devboard Example](docs/board.png)

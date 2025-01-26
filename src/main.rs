@@ -1,35 +1,51 @@
 #![no_std]
 #![no_main]
+#![feature(type_alias_impl_trait)]
 #![feature(impl_trait_in_assoc_type)]
 
-use defmt::*;
+use ch32_hal as hal;
 use embassy_executor::Spawner;
-use embassy_rp::gpio::{Level, Output};
 use embassy_time::Timer;
-use {defmt_rtt as _, panic_probe as _};
+use hal::gpio::{AnyPin, Level, Output, Pin};
+use hal::println;
 
-mod usb_serial;
-
-#[embassy_executor::main]
-async fn main(spawner: Spawner) {
-    let p = embassy_rp::init(Default::default());
-    let mut sp = usb_serial::init(&spawner, p.USB);
-
-    // NOTE: info!() only goes to a debug probe, sp.print() goes out USB
-    info!("Hello World!");
-    sp.print("Hello World!\n").await;
-
-    let mut led = Output::new(p.PIN_25, Level::Low);
+#[embassy_executor::task(pool_size = 4)]
+async fn blink(pin: AnyPin, interval_ms: u64) {
+    let mut led = Output::new(pin, Level::Low, Default::default());
 
     loop {
-        info!("high");
-        sp.print("high\n").await;
         led.set_high();
-        Timer::after_millis(1000).await;
-
-        info!("low");
-        sp.print("low\n").await;
+        Timer::after_millis(interval_ms).await;
         led.set_low();
-        Timer::after_millis(1000).await;
+        Timer::after_millis(interval_ms).await;
     }
+}
+
+#[embassy_executor::main(entry = "qingke_rt::entry")]
+async fn main(spawner: Spawner) -> ! {
+    hal::debug::SDIPrint::enable();
+    let mut config = hal::Config::default();
+    config.rcc = hal::rcc::Config::SYSCLK_FREQ_48MHZ_HSI;
+    let p = hal::init(config);
+
+    println!("CHIP signature => {}", hal::signature::chip_id().name());
+    Timer::after_millis(10).await;
+    println!("Clocks {:?}", hal::rcc::clocks());
+
+    let mut led = Output::new(p.PD3, Level::High, Default::default());
+    loop {
+        println!("tick");
+
+        led.set_high();
+        Timer::after_millis(500).await;
+        led.set_low();
+        Timer::after_millis(500).await;
+    }
+}
+
+#[panic_handler]
+fn panic(info: &core::panic::PanicInfo) -> ! {
+    let _ = hal::println!("\n\n\n{}", info);
+
+    loop {}
 }
