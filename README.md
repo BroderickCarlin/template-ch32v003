@@ -21,3 +21,4 @@ by default the repo uses wlink for programming. It should be installed first fro
 ## Devboard Example
 (must have an external wlink programer)
 ![Devboard Example](docs/board.png)
+![Chip Pinout](docs/pinout.jpg)
