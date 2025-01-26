@@ -36,13 +36,13 @@ async fn main(spawner: Spawner) -> ! {
     spawner
         .spawn(blink(
             Output::new(p.PD3, Level::High, Default::default()),
-            300,
+            100,
         ))
         .unwrap();
 
     loop {
         println!("tick");
-        Timer::after_millis(500).await;
+        Timer::after_millis(1000).await;
     }
 }
 
