@@ -18,7 +18,7 @@ embassy-executor = { version = "0.6", features = [
     "executor-thread",
     "nightly"
 ] }
-embassy-time = { version = "0.3"}
+embassy-time = { version = "0.4"}
 ch32-hal = { git = "https://github.com/ch32-rs/ch32-hal.git", features = [
     "ch32v003f4u6",
     "memory-x",
